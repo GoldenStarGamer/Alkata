@@ -3,7 +3,7 @@
 
 Every Array starts with an int that represents the number of elements in the array. This is followed by the elements themselves.
 For Example: Shader[] is actually:
-Shader# - Number of Shaders
+int32 Shader# - Number of Shaders
 Shader1
 Shader2
 etc...
@@ -15,7 +15,7 @@ ShaderDef[] - Shader Definitions
 ├─Uniforms[]
 | ├─char[] UniformName
 │ │// should we store the uniform type? and how?
-├─uint32 Pos - the position of the shader code in the file
+├─uint32 Position - the position of the shader code in the file
 ├─uint32 Size - the size of the shader code in the file
 
 All of the shader's codes

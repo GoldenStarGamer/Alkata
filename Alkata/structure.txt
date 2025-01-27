@@ -1,0 +1,23 @@
+﻿Alkata v1 Structure
+===================
+
+Every Array starts with an int that represents the number of elements in the array. This is followed by the elements themselves.
+For Example: Shader[] is actually:
+Shader# - Number of Shaders
+Shader1
+Shader2
+etc...
+
+byte[8] Magic - (0xFF, "ALKATA", 0xFF)
+int64 Version - for this structure, it is 1, this is 64 bits to allow for you guys to continue my legacy for years to come
+ShaderDef[] - Shader Definitions
+├─uint ShaderKind - Shader Kind, as declared in the Vulkan API
+├─Uniforms[]
+| ├─char[] UniformName
+│ │// should we store the uniform type? and how?
+├─uint32 Pos - the position of the shader code in the file
+├─uint32 Size - the size of the shader code in the file
+
+All of the shader's codes
+
+int32 Timestamp - the time the file was last modified, in Unix Timestamp format, this helps with caching, preventing useless compiles unless the file has been modified

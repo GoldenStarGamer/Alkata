@@ -14,14 +14,33 @@ namespace Alkata
 
 		}
 
-		public static Alkata Compile(Shader[] shaders, FileStream fs)
+		public static byte[] Compile(Shader[] shaders)
 		{
-			List<byte> buffer = [.. Magic, .. BitConverter.GetBytes(shaders.Length)];
-			
-			
+			List<byte> buffer = [.. Magic, 1, .. BitConverter.GetBytes(shaders.Length)];
+
+			List<int> positions = [];
+
+			foreach (var shader in shaders)
+			{
+				buffer.AddRange(BitConverter.GetBytes((uint)shader.Type));
+				positions.Add(buffer.Count);
+				buffer.AddRange(BitConverter.GetBytes(ulong.MinValue));
+				buffer.AddRange(BitConverter.GetBytes((ulong)shader.Code.Length));
+			}
+
+			for (int i = 0; i < shaders.Length; i++)
+			{
+				for (int s = positions[i]; i < positions[i] + sizeof(ulong); i++)
+				{
+					buffer[s] = BitConverter.GetBytes((ulong)buffer.Count)[s];
+				}
+				buffer.AddRange(shaders[i].Code);
+			}
+
+			return [.. buffer];
 		}
 
-		public Alkata FromFile(FileStream fs)
+		public static Shader[] FromFile(FileStream fs)
 		{
 			Span<byte> buffer = new byte[20];
 			fs.Read(buffer);
@@ -33,48 +52,48 @@ namespace Alkata
 				}
 			}
 
-			var version = BitConverter.ToInt64(buffer[8..16]);
+			var version = BitConverter.ToUInt64(buffer[8..16]);
 
 			if(version != 1)
 			{
 				throw new InvalidDataException("Invalid Alkata version");
 			}
 
-			var shaderCount = BitConverter.ToInt32(buffer[16..20]);
-			var shaders = new ShaderDef[shaderCount];
+			var shaderCount = BitConverter.ToUInt32(buffer[16..20]);
+			var shaderDefs = new ShaderDef[shaderCount];
+
 			for (int i = 0; i < shaderCount; i++)
 			{
-				var buffr = new byte[sizeof(uint)];
-				fs.Read(buffr, 0, sizeof(uint));
-				shaders[i].Kind = (ShaderKind)BitConverter.ToUInt32(buffr[0..sizeof(uint)]);
-				buffr = new byte[sizeof(int)];
-				shaders[i].Uniforms = new ShaderDef.Uniform[fs.Read(buffr, 0, sizeof(int))];
-				for (int s = 0; s < shaders[i].Uniforms.Length; s++)
-				{
-					buffr = new byte[sizeof(int)];
-					char[] bufs = new char[fs.Read(buffr, 0, sizeof(int))];
+				buffer = new byte[sizeof(uint)];
+				fs.Read(buffer);
+				shaderDefs[i].Kind = (ShaderKind)BitConverter.ToUInt32(buffer);
 
-					shaders[i].Uniforms[s].Name = bufs.ToString() ?? throw new NullReferenceException();
-				}
-				buffr = new byte[sizeof(uint)];
-				// do position and size
+				buffer = new byte[sizeof(ulong)];
+				fs.Read(buffer);
+				shaderDefs[i].Position = BitConverter.ToUInt64(buffer);
 
+				buffer = new byte[sizeof(ulong)];
+				fs.Read(buffer);
+				shaderDefs[i].Size = BitConverter.ToUInt64(buffer);
 			}
 
+			var shaders = new Shader[shaderCount];
+			for (int i = 0; i < shaderCount; i++)
+			{
+				fs.Seek((long)shaderDefs[i].Position, SeekOrigin.Begin);
+				buffer = new byte[shaderDefs[i].Size];
+				fs.Read(buffer);
+				shaders[i] = new Shader { Code = buffer.ToArray(), Type = shaderDefs[i].Kind };
+			}
+
+			return shaders;
 		}
 
 		struct ShaderDef
 		{
-			public struct Uniform
-			{
-				public string Name;
-			}
-
 			public ShaderKind Kind;
-			public Uniform[] Uniforms;
-			public uint Position;
-			public uint Size;
+			public ulong Position;
+			public ulong Size;
 		}
-
 	}
 }

@@ -1,22 +1,31 @@
 ﻿Alkata v1 Structure
 ===================
 
-Every Array starts with an int that represents the number of elements in the array. This is followed by the elements themselves.
+Made by Starman (GoldenStarGamer)
+
+
+This is the structure of the Alkata file format, which is used to store multiple compiled shaders in a single file, 
+and easily expose certain properties.
+
+This file format is designed to be used with the Arqeta Engine, but can be used for other purposes as well.
+
+
+Every Struct Array starts with an int that represents the number of elements in the array. This is followed by the elements themselves.
 For Example: Shader[] is actually:
-int32 Shader# - Number of Shaders
+uint32 Shader# - Number of Shaders
 Shader1
 Shader2
 etc...
 
+fixed arrays are not affected by this.
+
+
 byte[8] Magic - (0xFF, "ALKATA", 0xFF)
-int64 Version - for this structure, it is 1, this is 64 bits to allow for you guys to continue my legacy for years to come
+uint64 Version - for this structure, it is 1, this is 64 bits to allow for you guys to continue my legacy for years to come
 ShaderDef[] - Shader Definitions
-├─uint ShaderKind - Shader Kind, as declared in the Vulkan API
-├─Uniforms[]
-| ├─char[] UniformName
-│ │// should we store the uniform type? and how?
-├─uint32 Position - the position of the shader code in the file
-├─uint32 Size - the size of the shader code in the file
+├─uint32 ShaderKind - Shader Kind, as declared in the Vulkan API
+├─uint64 Position - the position of the shader code in the file
+├─uint64 Size - the size of the shader code in the file
 
 All of the shader's codes
 

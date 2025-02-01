@@ -10,6 +10,9 @@ and easily expose certain properties.
 This file format is designed to be used with the Arqeta Engine, but can be used for other purposes as well.
 
 
+All data is intended to be little endian
+
+
 Every Struct Array starts with an int that represents the number of elements in the array. This is followed by the elements themselves.
 For Example: Shader[] is actually:
 uint32 Shader# - Number of Shaders
@@ -29,4 +32,4 @@ ShaderDef[] - Shader Definitions
 
 All of the shader's codes
 
-int32 Timestamp - the time the file was last modified, in Unix Timestamp format, this helps with caching, preventing useless compiles unless the file has been modified
+int64 Timestamp - the time the file was last modified, in Unix Timestamp format, this helps with caching, preventing useless compiles unless the file has been modified

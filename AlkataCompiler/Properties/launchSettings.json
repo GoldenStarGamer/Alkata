@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AlkataCompiler": {
+      "commandName": "Project",
+      "commandLineArgs": "alkata.akt vertex.glsl source overwrite VertexShader"
+    }
+  }
+}

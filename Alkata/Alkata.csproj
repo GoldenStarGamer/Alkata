@@ -1,14 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	  <TargetFramework>net8.0</TargetFramework>
+	  <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>enable</Nullable>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <Title>Alkata</Title>
+	  <Authors>Starman</Authors>
+	  <Description>Tools to handle Alkata files</Description>
+	  <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	  <RepositoryUrl>https://github.com/GoldenStarGamer/Alkata</RepositoryUrl>
+	  <PackageTags>shader;glsl;hlsl;net;spirv</PackageTags>
+	</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="NetShaderc" Version="1.0.0" />
-    <PackageReference Include="OpenTK.Graphics" Version="4.9.3" />
   </ItemGroup>
 
 </Project>

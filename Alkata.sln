@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlkataCompiler", "AlkataCom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Alkata", "Alkata\Alkata.csproj", "{6FFF4080-04E9-47D8-AF1C-8D4D5EF30CED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{7AB6439C-4E39-4956-B506-3D426AB6E754}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{6FFF4080-04E9-47D8-AF1C-8D4D5EF30CED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FFF4080-04E9-47D8-AF1C-8D4D5EF30CED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FFF4080-04E9-47D8-AF1C-8D4D5EF30CED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AB6439C-4E39-4956-B506-3D426AB6E754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AB6439C-4E39-4956-B506-3D426AB6E754}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AB6439C-4E39-4956-B506-3D426AB6E754}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AB6439C-4E39-4956-B506-3D426AB6E754}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

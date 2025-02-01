@@ -1,22 +1,17 @@
 ﻿using NetShaderc;
-using OpenTK.Graphics.OpenGL4;
 using System.Text;
 namespace Alkata
 {
 	/// <summary>
 	/// Alkata is a shader container file format made to quickly expose relevant info
 	/// </summary>
-	public class Alkata
+	public static class Alkata
 	{
 		static readonly byte[] Magic = [ 0xFF, .. Encoding.UTF8.GetBytes("ALKATA"), 0xFF ];
-		Alkata()
-		{
-
-		}
 
 		public static byte[] Compile(Shader[] shaders)
 		{
-			List<byte> buffer = [.. Magic, 1, .. BitConverter.GetBytes(shaders.Length)];
+			List<byte> buffer = [.. Magic, .. BitConverter.GetBytes(1ul), .. BitConverter.GetBytes((uint)shaders.Length)];
 
 			List<int> positions = [];
 
@@ -30,20 +25,36 @@ namespace Alkata
 
 			for (int i = 0; i < shaders.Length; i++)
 			{
-				for (int s = positions[i]; i < positions[i] + sizeof(ulong); i++)
+				for (int s = 0; s < sizeof(ulong); s++)
 				{
-					buffer[s] = BitConverter.GetBytes((ulong)buffer.Count)[s];
+					var ss = s + positions[i];
+					var sss = BitConverter.GetBytes((ulong)buffer.Count)[s];
+					buffer[ss] = sss;
 				}
 				buffer.AddRange(shaders[i].Code);
 			}
 
+			buffer.AddRange(BitConverter.GetBytes(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
+
 			return [.. buffer];
 		}
 
-		public static Shader[] FromFile(FileStream fs)
+		public static Shader[] FromFile(string path)
 		{
+			return FromBytes(File.ReadAllBytes(path));
+		}
+
+		public static Shader[] FromBytes(byte[] data)
+		{
+			var index = 0;
+			byte[] Read(int size)
+			{
+				var buf = data.AsSpan()[index..(index + size)];
+				index += size;
+				return buf.ToArray();
+			}
 			Span<byte> buffer = new byte[20];
-			fs.Read(buffer);
+			buffer = Read(buffer.Length);
 			for (int i = 0; i < Magic.Length; i++)
 			{
 				if (buffer[i] != Magic[i])
@@ -54,7 +65,7 @@ namespace Alkata
 
 			var version = BitConverter.ToUInt64(buffer[8..16]);
 
-			if(version != 1)
+			if (version != 1)
 			{
 				throw new InvalidDataException("Invalid Alkata version");
 			}
@@ -65,24 +76,24 @@ namespace Alkata
 			for (int i = 0; i < shaderCount; i++)
 			{
 				buffer = new byte[sizeof(uint)];
-				fs.Read(buffer);
+				buffer = Read(buffer.Length);
 				shaderDefs[i].Kind = (ShaderKind)BitConverter.ToUInt32(buffer);
 
 				buffer = new byte[sizeof(ulong)];
-				fs.Read(buffer);
+				buffer = Read(buffer.Length);
 				shaderDefs[i].Position = BitConverter.ToUInt64(buffer);
 
 				buffer = new byte[sizeof(ulong)];
-				fs.Read(buffer);
+				buffer = Read(buffer.Length);
 				shaderDefs[i].Size = BitConverter.ToUInt64(buffer);
 			}
 
 			var shaders = new Shader[shaderCount];
 			for (int i = 0; i < shaderCount; i++)
 			{
-				fs.Seek((long)shaderDefs[i].Position, SeekOrigin.Begin);
+				index = (int)shaderDefs[i].Position;
 				buffer = new byte[shaderDefs[i].Size];
-				fs.Read(buffer);
+				buffer = Read(buffer.Length);
 				shaders[i] = new Shader { Code = buffer.ToArray(), Type = shaderDefs[i].Kind };
 			}
 

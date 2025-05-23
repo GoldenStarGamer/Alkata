@@ -13,4 +13,4 @@ todo
 todo
 
 # NuGet Package
-there's a NuGet package right [here](https://www.nuget.org/packages/Alkata/)
+There's a NuGet package right [here](https://www.nuget.org/packages/Alkata/)
